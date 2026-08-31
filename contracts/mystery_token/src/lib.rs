@@ -18,8 +18,8 @@ use soroban_sdk::{contract, contractimpl, contracttype, Address, Env, String};
 // ║  Cambia estos valores por los de tu caja. Despues:         ║
 // ║  git add . && git commit -m "Reto 1: mi token" && git push ║
 // ╚═══════════════════════════════════════════════════════════╝
-const TOKEN_NAME: &str = "CAMBIAME"; // Nombre de tu token
-const TOKEN_SYMBOL: &str = "XXX"; // Simbolo (3-5 letras)
+const TOKEN_NAME: &str = "Token de Sombra"; // Nombre de tu token
+const TOKEN_SYMBOL: &str = "SOM"; // Simbolo (3-5 letras)
 const TOKEN_DECIMALS: u32 = 7; // Dejalo en 7 (estandar de Stellar)
 const INITIAL_SUPPLY: i128 = 1_000_000; // Cuantos tokens acuñar
 
@@ -130,16 +130,20 @@ impl MysteryToken {
         }
 
         // 🔍 PISTA 1: calcula la comision, un 1% del monto (amount / 100)
-        // let fee = ???;
+        let fee = amount / 100;
 
         // 🔍 PISTA 2: el monto que realmente llega es amount - fee
-        // let net = ???;
+        let net = amount - fee;
 
         // 🔍 PISTA 3: resta `amount` del balance de `from`
         // 🔍 PISTA 4: suma `net` al balance de `to`
-        // 🔍 PISTA 5: "quema" la `fee` reduciendo el supply total (read_supply/write_supply)
+        let to_balance = read_balance(&env, &to);
+        write_balance(&env, &from, from_balance - amount);
+        write_balance(&env, &to, to_balance + net);
 
-        panic!("TODO Reto 2: completa esta funcion siguiendo las pistas");
+        // 🔍 PISTA 5: "quema" la `fee` reduciendo el supply total (read_supply/write_supply)
+        let supply = read_supply(&env);
+        write_supply(&env, supply - fee);
     }
 }
 
